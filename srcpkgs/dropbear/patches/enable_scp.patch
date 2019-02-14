@@ -1,0 +1,23 @@
+--- a/Makefile.in	2018-02-28 03:25:10.000000000 +1300
++++ b/Makefile.in.new	2018-06-20 18:36:43.975533694 +1200
+@@ -9,7 +9,7 @@
+ # dbclient functionality, and includes the progress-bar functionality in scp.
+ 
+ ifndef PROGRAMS
+-	PROGRAMS=dropbear dbclient dropbearkey dropbearconvert
++	PROGRAMS=dropbear dbclient dropbearkey dropbearconvert scp
+ endif
+ 
+ STATIC_LTC=libtomcrypt/libtomcrypt.a
+@@ -116,9 +116,9 @@
+ endif
+ 
+ # for the scp progress meter. The -D doesn't affect anything else.
+-ifeq ($(SCPPROGRESS), 1)
++#ifeq ($(SCPPROGRESS), 1)
+ 	CFLAGS+=-DPROGRESS_METER
+-endif
++#endif
+ 
+ all: $(TARGETS)
+ 
