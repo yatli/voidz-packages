@@ -4,6 +4,7 @@ git clone git://github.com/greguu/voidz-packages.git
 cd voidz-packages
 ./xbps-src -m masterdir-armv5tel-musl -a armv5tel-musl -r armv5tel-musl binary-bootstrap
 ./xbps-src -m masterdir-armv5tel-musl -a armv5tel-musl -r armv5tel-musl pkg zaurus-base
+./xbps-src -m masterdir-armv5tel-musl -a armv5tel-musl -r armv5tel-musl pkg base-voidstrap
 cd ..
 git clone git://github.com/greguu/voidz-mklive.git
 cd voidz-mklive
