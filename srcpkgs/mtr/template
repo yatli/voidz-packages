@@ -3,8 +3,8 @@ pkgname=mtr
 version=0.92
 revision=3
 build_style="gnu-configure"
-hostmakedepends="automake pkg-config gtk+-devel"
-makedepends="ncurses-devel gtk+-devel libcap-devel"
+hostmakedepends="automake pkg-config "
+makedepends="ncurses-devel libcap-devel"
 depends="libcap-progs"
 short_desc="Combines the functionality of traceroute and ping into one tool"
 maintainer="Steven R <dev@styez.com>"
@@ -23,12 +23,10 @@ do_configure() {
 	cd $wrksrc/build_nox
 	$wrksrc/configure ${configure_args} --without-gtk
 
-	cd $wrksrc/build_x11
-	$wrksrc/configure ${configure_args}
 }
 
 do_build() {
-	for p in $wrksrc/build_nox $wrksrc/build_x11; do
+	for p in $wrksrc/build_nox; do
 		cd $p
 		make ${makejobs}
 	done
@@ -40,13 +38,3 @@ do_install() {
 	chmod 0755 $DESTDIR/usr/bin/*
 }
 
-mtr-x11_package() {
-	provides="mtr-${version}_${revision}"
-	replaces="mtr>0"
-	short_desc+=" - X11 version"
-	pkg_install() {
-		cd $wrksrc/build_x11
-		make DESTDIR=$PKGDESTDIR install
-		chmod 0755 $PKGDESTDIR/usr/bin/*
-	}
-}
