@@ -4,7 +4,7 @@ version=2.13.0
 revision=3
 build_style=gnu-configure
 configure_args="--disable-schemas-install --disable-meanwhile
- --disable-cyrus-sasl --disable-doxygen --enable-nm --enable-vv
+ --disable-cyrus-sasl --disable-doxygen --enable-nm --disable-vv
  --with-system-ssl-certs=/etc/ssl/certs --disable-tk --disable-tcl
  --enable-gnutls --disable-perl --without-x --disable-dbus --disable-gtkui --disable-gstreamer --disable-avahi
  --with-ncurses-headers=${XBPS_CROSS_BASE}/usr/include"
