@@ -4,12 +4,10 @@ version=2.14.9
 revision=1
 build_style=gnu-configure
 configure_args="--disable-schemas-install --disable-meanwhile
- --enable-cyrus-sasl --disable-doxygen --enable-nm --enable-vv
+ --disable-cyrus-sasl --disable-doxygen --enable-nm --enable-vv
  --with-system-ssl-certs=/etc/ssl/certs --disable-tk --disable-tcl
- --disable-gnutls --disable-perl
- --with-ncurses-headers=${XBPS_CROSS_BASE}/usr/include
- --with-avahi-client-includes=${XBPS_CROSS_BASE}/usr/include
- --with-avahi-client-libs=${XBPS_CROSS_BASE}/usr/lib"
+ --enable-gnutls --disable-perl --without-x --disable-dbus --disable-gtkui --disable-gstreamer --disable-avahi
+ --with-ncurses-headers=${XBPS_CROSS_BASE}/usr/include"
 short_desc="Multi-protocol instant messaging client"
 maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-2.0-or-later"
@@ -19,13 +17,9 @@ checksum=1872d1629a26e9b775d9ec0bdd3d3fd348f721376f320b29bcd5ff3f0443222b
 python_version=2
 lib32disabled=yes
 
-hostmakedepends="pkg-config intltool automake libtool gettext gettext-devel glib-devel"
-makedepends="evolution-data-server-devel libglib-devel gtk+-devel libXext-devel
- libXScrnSaver-devel gtkspell-devel startup-notification-devel ncurses-devel
- libxml2-devel gst-plugins-base1-devel libidn-devel python-devel
- avahi-glib-libs-devel dbus-glib-devel NetworkManager-devel nss-devel
- libsasl-devel libSM-devel farstream-devel libgnt-devel"
-depends="cyrus-sasl-modules gst-plugins-good1"
+hostmakedepends="pkg-config intltool automake libtool gettext-devel glib-devel"
+makedepends="libglib-devel ncurses-devel libxml2-devel libidn-devel python-devel
+  libsasl-devel libSM-devel gnutls-devel"
 
 CFLAGS="-Wno-deprecated-declarations"
 
@@ -39,7 +33,7 @@ post_install() {
 libpurple_package() {
 	short_desc="IM library extracted from Pidgin"
 	pkg_install() {
-		vmove "usr/bin/purple-*"
+		#vmove "usr/bin/purple-*"
 		vmove "usr/lib/libpurple*.so.*"
 		vmove usr/lib/purple-2
 		vmove usr/share/sounds/purple
@@ -72,7 +66,7 @@ finch-devel_package() {
 	}
 }
 pidgin-devel_package() {
-	depends="gtk+-devel libpurple-devel>=${version}_${revision}"
+	depends="libpurple-devel>=${version}_${revision}"
 	short_desc+=" - development files"
 	pkg_install() {
 		vmove usr/include
