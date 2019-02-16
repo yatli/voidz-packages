@@ -4,12 +4,10 @@ version=2.13.0
 revision=3
 build_style=gnu-configure
 configure_args="--disable-schemas-install --disable-meanwhile
- --enable-cyrus-sasl --disable-doxygen --enable-nm --enable-vv
+ --disable-cyrus-sasl --disable-doxygen --enable-nm --enable-vv
  --with-system-ssl-certs=/etc/ssl/certs --disable-tk --disable-tcl
- --disable-gnutls --disable-perl
- --with-ncurses-headers=${XBPS_CROSS_BASE}/usr/include
- --with-avahi-client-includes=${XBPS_CROSS_BASE}/usr/include
- --with-avahi-client-libs=${XBPS_CROSS_BASE}/usr/lib"
+ --enable-gnutls --disable-perl --without-x --disable-dbus --disable-gtkui --disable-gstreamer --disable-avahi
+ --with-ncurses-headers=${XBPS_CROSS_BASE}/usr/include"
 short_desc="Multi-protocol instant messaging client"
 maintainer="Juan RP <xtraeme@voidlinux.org>"
 license="GPL-2.0-or-later"
@@ -19,12 +17,8 @@ checksum=2747150c6f711146bddd333c496870bfd55058bab22ffb7e4eb784018ec46d8f
 lib32disabled=yes
 
 hostmakedepends="pkg-config intltool automake libtool gettext-devel glib-devel"
-makedepends="libglib-devel gtk+-devel libXext-devel
- libXScrnSaver-devel gtkspell-devel startup-notification-devel ncurses-devel
- libxml2-devel gst-plugins-base1-devel libidn-devel python-devel
- avahi-glib-libs-devel dbus-glib-devel NetworkManager-devel nss-devel
- libsasl-devel libXext-devel libSM-devel farstream-devel"
-depends="cyrus-sasl-modules gst-plugins-good1"
+makedepends="libglib-devel ncurses-devel libxml2-devel libidn-devel python-devel
+  libsasl-devel libSM-devel gnutls-devel"
 
 pre_configure() {
 	autoreconf -fi
@@ -36,7 +30,7 @@ post_install() {
 libpurple_package() {
 	short_desc="IM library extracted from Pidgin"
 	pkg_install() {
-		vmove "usr/bin/purple-*"
+		#vmove "usr/bin/purple-*"
 		vmove "usr/lib/libpurple*.so.*"
 		vmove usr/lib/purple-2
 		vmove usr/share/sounds/purple
@@ -85,7 +79,7 @@ finch-devel_package() {
 	}
 }
 pidgin-devel_package() {
-	depends="gtk+-devel libpurple-devel>=${version}_${revision}"
+	depends="libpurple-devel>=${version}_${revision}"
 	short_desc+=" - development files"
 	pkg_install() {
 		vmove usr/include
