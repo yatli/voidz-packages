@@ -3,13 +3,13 @@ pkgname=git
 version=2.20.1
 revision=2
 build_style=gnu-configure
-configure_args="--with-curl --with-expat --with-tcltk --with-libpcre2
+configure_args="--with-curl --with-expat --without-tcltk --with-libpcre2
  ac_cv_snprintf_returns_bogus=no"
 make_install_args="NO_INSTALL_HARDLINKS=1 INSTALLDIRS=vendor
  perllibdir=/usr/share/perl5/vendor_perl"
 make_check_target=test
-hostmakedepends="asciidoc perl pkg-config tk xmlto"
-makedepends="libglib-devel libcurl-devel libsecret-devel pcre2-devel tk-devel"
+hostmakedepends="asciidoc perl pkg-config xmlto"
+makedepends="libglib-devel libcurl-devel libsecret-devel pcre2-devel"
 # Required by https://
 depends="ca-certificates perl-Authen-SASL perl-MIME-tools perl-Net-SMTP-SSL"
 short_desc="Git Tree History Storage Tool"
@@ -21,7 +21,7 @@ distfiles="https://www.kernel.org/pub/software/scm/git/git-${version}.tar.xz"
 checksum=9d2e91e2faa2ea61ba0a70201d023b36f54d846314591a002c610ea2ab81c3e9
 replaces="git-perl>=0"
 
-subpackages="git-cvs git-svn gitk git-gui git-all git-libsecret"
+subpackages="git-cvs git-svn git-all git-libsecret"
 
 case "$XBPS_TARGET_MACHINE" in
 	*-musl) configure_args+=" ac_cv_fread_reads_directories=yes" ;;
@@ -64,27 +64,6 @@ git-svn_package() {
 		vmove usr/libexec/git-core/git-remote-testsvn
 		vmove usr/libexec/git-core/git-svn
 		vmove usr/share/man/man1/git-svn.1
-	}
-}
-gitk_package() {
-	noarch=yes
-	depends="git-${version}_${revision} tk"
-	short_desc="The Git repository browser"
-	pkg_install() {
-		vmove usr/bin/gitk
-		vmove usr/share/gitk
-		vmove usr/share/man/man1/gitk.1
-	}
-}
-git-gui_package() {
-	noarch=yes
-	depends="git-${version}_${revision} tk"
-	short_desc+=" - GUI tool"
-	pkg_install() {
-		vmove usr/libexec/git-core/git-gui--askpass
-		vmove usr/libexec/git-core/git-gui
-		vmove usr/share/man/man1/git-gui.1
-		vmove usr/share/git-gui
 	}
 }
 git-all_package() {
