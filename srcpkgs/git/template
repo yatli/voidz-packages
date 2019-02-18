@@ -1,9 +1,21 @@
 # Template file for 'git'
 pkgname=git
-version=2.37.2
-revision=1
-hostmakedepends="asciidoc gettext perl pkg-config tk xmlto"
-makedepends="libglib-devel libcurl-devel libsecret-devel pcre2-devel tk-devel"
+
+# HEAD:
+# version=2.37.2
+# revision=1
+# hostmakedepends="asciidoc gettext perl pkg-config tk xmlto"
+# makedepends="libglib-devel libcurl-devel libsecret-devel pcre2-devel tk-devel"
+version=2.20.1
+revision=2
+build_style=gnu-configure
+configure_args="--with-curl --with-expat --without-tcltk --with-libpcre2
+ ac_cv_snprintf_returns_bogus=no"
+make_install_args="NO_INSTALL_HARDLINKS=1 INSTALLDIRS=vendor
+ perllibdir=/usr/share/perl5/vendor_perl"
+make_check_target=test
+hostmakedepends="asciidoc perl pkg-config xmlto"
+makedepends="libglib-devel libcurl-devel libsecret-devel pcre2-devel"
 # Required by https://
 depends="ca-certificates perl-Authen-SASL perl-MIME-tools perl-Net-SMTP-SSL"
 checkdepends="gnupg cvs cvsps2 perl-DBD-SQLite subversion subversion-perl
@@ -19,7 +31,9 @@ replaces="git-perl>=0"
 register_shell=/usr/bin/git-shell
 python_version=3
 
-subpackages="git-cvs git-svn gitk git-gui git-all git-libsecret git-netrc"
+# HEAD:
+# subpackages="git-cvs git-svn gitk git-gui git-all git-libsecret git-netrc"
+subpackages="git-cvs git-svn git-all git-libsecret"
 
 do_configure() {
 	cat <<-EOF >config.mak
@@ -107,32 +121,6 @@ git-svn_package() {
 		vmove usr/share/man/man1/git-svn.1
 	}
 }
-
-gitk_package() {
-	depends="git-${version}_${revision} tk"
-	short_desc="Git repository browser"
-	license="GPL-2.0-or-later"
-	pkg_install() {
-		vmove usr/bin/gitk
-		vmove usr/share/gitk
-		vmove usr/share/man/man1/gitk.1
-	}
-}
-
-git-gui_package() {
-	depends="git-${version}_${revision} tk"
-	short_desc+=" - GUI tool"
-	license="GPL-2.0-or-later"
-	pkg_install() {
-		vmove usr/libexec/git-core/git-gui--askpass
-		vmove usr/libexec/git-core/git-gui
-		vmove usr/libexec/git-core/git-citool
-		vmove usr/share/man/man1/git-gui.1
-		vmove usr/share/man/man1/git-citool.1
-		vmove usr/share/git-gui
-	}
-}
-
 git-all_package() {
 	build_style=meta
 	depends="${subpackages/git-all/}"
