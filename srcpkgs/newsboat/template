@@ -1,30 +1,53 @@
 # Template file for 'newsboat'
 pkgname=newsboat
-version=2.28
+# HEAD:
+# version=2.28
+version=r2.12
 revision=1
 build_style=configure
-build_helper="rust"
 configure_script="./config.sh"
 make_install_args="prefix=/usr"
-make_check_target="ci-check"
-hostmakedepends="ruby-asciidoctor pkg-config cargo git gettext"
-makedepends="json-c-devel libcurl-devel libxml2-devel sqlite-devel stfl-devel
- rust-std"
+# HEAD:
+# make_check_target="ci-check"
+# hostmakedepends="ruby-asciidoctor pkg-config cargo git gettext"
+# makedepends="json-c-devel libcurl-devel libxml2-devel sqlite-devel stfl-devel
+#  rust-std"
+# checkdepends="ncurses-base"
+# short_desc="RSS/Atom feed reader for the text console"
+# maintainer="Daniel Eyßer <daniel.eysser@gmail.com>"
+hostmakedepends="asciidoc pkg-config"
 checkdepends="ncurses-base"
-short_desc="RSS/Atom feed reader for the text console"
-maintainer="Daniel Eyßer <daniel.eysser@gmail.com>"
+makedepends="json-c-devel libcurl-devel libxml2-devel sqlite-devel stfl-devel"
+short_desc="Newsboat is a fork of Newsbeuter the Mutt of RSS feed readers"
+maintainer="maxice8 <thinkabit.ukim@gmail.com>"
 license="MIT"
 homepage="https://newsboat.org/"
 changelog="https://raw.githubusercontent.com/newsboat/newsboat/master/CHANGELOG.md"
-distfiles="https://newsboat.org/releases/${version}/newsboat-${version}.tar.xz"
-checksum=2508713ac850f1f2ae156e4b42cbc75a1c9e399d804e007b5773019115d3b0ec
+# HEAD:
+# distfiles="https://newsboat.org/releases/${version}/newsboat-${version}.tar.xz"
+# checksum=2508713ac850f1f2ae156e4b42cbc75a1c9e399d804e007b5773019115d3b0ec
+distfiles="https://github.com/newsboat/newsboat/archive/${version}.tar.gz"
+checksum=8f2f511703d3218ab195fa48dc94306f5e13ceff86d94dcf78d917cb57090c88
+make_build_target="all doc"
 
 # tests fail when run by superuser
 # they always fail on musl, see https://github.com/newsboat/newsboat/issues/1216
 make_check=extended
 
-pre_check() {
-	export TERM=$TERM
+pre_configure() {
+	if [ "$CROSS_BUILD" ]; then
+		cd doc
+		g++ -o generate generate.cpp
+		g++ -o generate2 generate2.cpp
+		g++ -o gen-example-config gen-example-config.cpp
+	fi
+}
+
+do_check() {
+	rm -f test/rss.cpp
+
+	make test
+	(cd test && TERM=$TERM TMPDIR=/dev/shm ./test)
 }
 
 post_install() {
