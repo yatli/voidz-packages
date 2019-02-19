@@ -17,7 +17,7 @@ noshlibprovides=yes
 preserve=yes
 
 only_for_archs="armv5tel-musl"
-hostmakedepends="bc elfutils-devel kmod libressl-devel perl gmp-devel libmpc-devel lz4 ccache flex bison musl-fts"
+hostmakedepends="bc elfutils-devel kmod libressl-devel perl gmp-devel libmpc-devel lz4 ccache flex bison musl-fts dtc uboot-mkimage"
 
 _kernver="${version}_${revision}"
 triggers="kernel-hooks"
@@ -90,6 +90,12 @@ do_build() {
 	export LDFLAGS=
 	make ARCH=$arch ${_version} ${_cross} ${makejobs} prepare 
 	make ARCH=$arch ${_version} ${_cross} ${makejobs} ${_args} 
+	make ARCH=$arch ${_version} ${_cross} ${makejobs} dtbs
+	#dtc -O dtb -o ${FILESDIR}/zipit-z2_template.dtb ${FILESDIR}/zipit-z2_template.dts
+	cat arch/arm/boot/zImage arch/arm/boot/dts/zipit-z2.dtb > arch/arm/boot/zImage-dtb
+	mkimage -A Arm -O linux -C none -T kernel -a 0xA0008000 -e 0xA0008000 -n uImage-dtb -d arch/arm/boot/zImage-dtb arch/arm/boot/uImage-tmp
+	dd if=arch/arm/boot/uImage-tmp of=arch/arm/boot/uImage bs=64k conv=sync
+
 }
 do_install() {
 	local arch subarch _args hdrdest
@@ -117,7 +123,7 @@ do_install() {
 			vinstall arch/x86/boot/bzImage 644 boot vmlinuz-${_kernver}
 			;;
 		arm)
-			vinstall arch/arm/boot/zImage 644 boot
+			vinstall arch/arm/boot/uImage 644 boot
 			#vmkdir boot/dtbs
 			#cp arch/arm/boot/dts/*.dtb ${DESTDIR}/boot/dtbs
 			;;
