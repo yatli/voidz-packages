@@ -1,0 +1,48 @@
+--- b/drivers/dma/pxa_dma.c
++++ a/drivers/dma/pxa_dma.c
+@@ -179,7 +179,7 @@
+ 	return 0x1000 + line * 4;
+ }
+ 
++bool pxad_filter_fn(struct dma_chan *chan, void *param);
+-static bool pxad_filter_fn(struct dma_chan *chan, void *param);
+ 
+ /*
+  * Debug fs
+@@ -1500,7 +1500,7 @@
+ 	.remove		= pxad_remove,
+ };
+ 
++bool pxad_filter_fn(struct dma_chan *chan, void *param)
+-static bool pxad_filter_fn(struct dma_chan *chan, void *param)
+ {
+ 	struct pxad_chan *c = to_pxad_chan(chan);
+ 	struct pxad_param *p = param;
+@@ -1502,6 +1502,8 @@
+        return true;
+ }
+
++EXPORT_SYMBOL_GPL(pxad_filter_fn);
++
+ module_platform_driver(pxad_driver);
+
+ MODULE_DESCRIPTION("Marvell PXA Peripheral DMA Driver");
+--- b/include/linux/dma/pxa-dma.h
++++ a/include/linux/dma/pxa-dma.h
+@@ -23,4 +23,15 @@
+        enum pxad_chan_prio prio;
+ };
+
++struct dma_chan;
++
++#ifdef CONFIG_PXA_DMA
++bool pxad_filter_fn(struct dma_chan *chan, void *param);
++#else
++static inline bool pxad_filter_fn(struct dma_chan *chan, void *param)
++{
++       return false;
++}
++#endif
++
+ #endif /* _PXA_DMA_H_ */
+

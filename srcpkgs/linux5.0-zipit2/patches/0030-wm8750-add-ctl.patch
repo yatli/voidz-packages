@@ -1,0 +1,10 @@
+--- a/sound/soc/codecs/wm8750.c	2019-03-12 19:12:15.072650897 +1300
++++ b/sound/soc/codecs/wm8750.c	2019-03-12 19:28:05.155572264 +1300
+@@ -704,6 +704,7 @@
+ 	snd_soc_component_update_bits(component, WM8750_ROUT2V, 0x0100, 0x0100);
+ 	snd_soc_component_update_bits(component, WM8750_LINVOL, 0x0100, 0x0100);
+ 	snd_soc_component_update_bits(component, WM8750_RINVOL, 0x0100, 0x0100);
++	snd_soc_component_update_bits(component, WM8750_ADCTL3, 0x0180, 0x0180);
+ 
+ 	return ret;
+ }

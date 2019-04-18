@@ -1,0 +1,234 @@
+--- b/sound/soc/pxa/pxa2xx-pcm.c
++++ a/sound/soc/pxa/pxa2xx-pcm.c
+@@ -84,7 +84,7 @@
+ 	return ret;
+ }
+ 
++static const struct snd_soc_platform_driver pxa2xx_soc_platform = {
+-static const struct snd_soc_component_driver pxa2xx_soc_platform = {
+ 	.ops		= &pxa2xx_pcm_ops,
+ 	.pcm_new	= pxa2xx_soc_pcm_new,
+ 	.pcm_free	= pxa2xx_pcm_free_dma_buffers,
+@@ -92,8 +92,7 @@
+ 
+ static int pxa2xx_soc_platform_probe(struct platform_device *pdev)
+ {
++	return devm_snd_soc_register_platform(&pdev->dev, &pxa2xx_soc_platform);
+-	return devm_snd_soc_register_component(&pdev->dev, &pxa2xx_soc_platform,
+-					       NULL, 0);
+ }
+ 
+ #ifdef CONFIG_OF
+--- a/include/sound/dmaengine_pcm.h       2019-03-04 12:21:29.000000000 +1300
++++ b/include/sound/dmaengine_pcm.h       2019-03-16 16:08:57.646369380 +1300
+@@ -158,6 +158,4 @@
+        struct snd_pcm_hw_params *params,
+        struct dma_slave_config *slave_config);
+
+-#define SND_DMAENGINE_PCM_DRV_NAME "snd_dmaengine_pcm"
+-
+ #endif
+--- a/sound/soc/soc-generic-dmaengine-pcm.c	  2019-03-16 16:17:09.643328661 +1300
++++ b/sound/soc/soc-generic-dmaengine-pcm.c       2019-03-16 16:40:49.052211185 +1300
+@@ -24,13 +24,13 @@
+ struct dmaengine_pcm {
+        struct dma_chan *chan[SNDRV_PCM_STREAM_LAST + 1];
+        const struct snd_dmaengine_pcm_config *config;
+-       struct snd_soc_component component;
++       struct snd_soc_platform platform;
+        unsigned int flags;
+ };
+
+-static struct dmaengine_pcm *soc_component_to_pcm(struct snd_soc_component *p)
++static struct dmaengine_pcm *soc_platform_to_pcm(struct snd_soc_platform *p)
+ {
+-       return container_of(p, struct dmaengine_pcm, component);
++       return container_of(p, struct dmaengine_pcm, platform);
+ }
+
+ static struct device *dmaengine_dma_dev(struct dmaengine_pcm *pcm,
+@@ -79,9 +79,7 @@
+        struct snd_pcm_hw_params *params)
+ {
+        struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-       struct snd_soc_component *component =
+-               snd_soc_rtdcom_lookup(rtd, SND_DMAENGINE_PCM_DRV_NAME);
+-       struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
++       struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+        struct dma_chan *chan = snd_dmaengine_pcm_get_chan(substream);
+        int (*prepare_slave_config)(struct snd_pcm_substream *substream,
+                        struct snd_pcm_hw_params *params,
+@@ -112,9 +110,7 @@
+ static int dmaengine_pcm_set_runtime_hwparams(struct snd_pcm_substream *substream)
+ {
+        struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-       struct snd_soc_component *component =
+-               snd_soc_rtdcom_lookup(rtd, SND_DMAENGINE_PCM_DRV_NAME);
+-       struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
++       struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+        struct device *dma_dev = dmaengine_dma_dev(pcm, substream);
+        struct dma_chan *chan = pcm->chan[substream->stream];
+        struct snd_dmaengine_dai_dma_data *dma_data;
+@@ -202,9 +198,7 @@
+ static int dmaengine_pcm_open(struct snd_pcm_substream *substream)
+ {
+        struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-       struct snd_soc_component *component =
+-               snd_soc_rtdcom_lookup(rtd, SND_DMAENGINE_PCM_DRV_NAME);
+-       struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
++       struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+        struct dma_chan *chan = pcm->chan[substream->stream];
+        int ret;
+
+@@ -219,9 +213,7 @@
+        struct snd_soc_pcm_runtime *rtd,
+        struct snd_pcm_substream *substream)
+ {
+-       struct snd_soc_component *component =
+-               snd_soc_rtdcom_lookup(rtd, SND_DMAENGINE_PCM_DRV_NAME);
+-       struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
++       struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+        struct snd_dmaengine_dai_dma_data *dma_data;
+        dma_filter_fn fn = NULL;
+
+@@ -260,11 +252,9 @@
+
+ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ {
+-       struct snd_soc_component *component =
+-               snd_soc_rtdcom_lookup(rtd, SND_DMAENGINE_PCM_DRV_NAME);
+-       struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
++       struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+        const struct snd_dmaengine_pcm_config *config = pcm->config;
+-       struct device *dev = component->dev;
++       struct device *dev = rtd->platform->dev;
+        struct snd_dmaengine_dai_dma_data *dma_data;
+        struct snd_pcm_substream *substream;
+        size_t prealloc_buffer_size;
+@@ -298,7 +288,7 @@
+                }
+
+                if (!pcm->chan[i]) {
+-                       dev_err(component->dev,
++                       dev_err(rtd->platform->dev,
+                                "Missing dma channel for stream: %d\n", i);
+                        return -EINVAL;
+                }
+@@ -322,9 +312,7 @@
+        struct snd_pcm_substream *substream)
+ {
+        struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-       struct snd_soc_component *component =
+-               snd_soc_rtdcom_lookup(rtd, SND_DMAENGINE_PCM_DRV_NAME);
+-       struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
++       struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
+
+        if (pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
+                return snd_dmaengine_pcm_pointer_no_residue(substream);
+@@ -387,9 +375,10 @@
+        .copy_user      = dmaengine_copy_user,
+ };
+
+-static const struct snd_soc_component_driver dmaengine_pcm_component = {
+-       .name           = SND_DMAENGINE_PCM_DRV_NAME,
+-       .probe_order    = SND_SOC_COMP_ORDER_LATE,
++static const struct snd_soc_platform_driver dmaengine_pcm_platform = {
++       .component_driver = {
++               .probe_order = SND_SOC_COMP_ORDER_LATE,
++       },
+        .ops            = &dmaengine_pcm_ops,
+        .pcm_new        = dmaengine_pcm_new,
+ };
+@@ -501,8 +490,8 @@
+                                            &dmaengine_pcm_component_process,
+                                            NULL, 0);
+        else
+-               ret = snd_soc_add_component(dev, &pcm->component,
+-                                           &dmaengine_pcm_component, NULL, 0);
++               ret = snd_soc_add_platform(dev, &pcm->platform,
++                       &dmaengine_pcm_platform);
+        if (ret)
+                goto err_free_dma;
+
+@@ -524,16 +513,16 @@
+  */
+ void snd_dmaengine_pcm_unregister(struct device *dev)
+ {
+-       struct snd_soc_component *component;
++       struct snd_soc_platform *platform;
+        struct dmaengine_pcm *pcm;
+
+-       component = snd_soc_lookup_component(dev, SND_DMAENGINE_PCM_DRV_NAME);
+-       if (!component)
++       platform = snd_soc_lookup_platform(dev);
++       if (!platform)
+                return;
+
+-       pcm = soc_component_to_pcm(component);
++       pcm = soc_platform_to_pcm(platform);
+
+-       snd_soc_unregister_component(dev);
++       snd_soc_remove_platform(platform);
+        dmaengine_pcm_release_chan(pcm);
+        kfree(pcm);
+ }
+--- a/sound/soc/soc-utils.c       2019-03-04 12:21:29.000000000 +1300
++++ b/sound/soc/soc-utils.c       2019-03-16 16:54:52.108141411 +1300
+@@ -278,16 +278,11 @@
+        .ioctl          = snd_pcm_lib_ioctl,
+ };
+
+-static const struct snd_soc_component_driver dummy_platform = {
++static const struct snd_soc_platform_driver dummy_platform = {
+        .ops = &snd_dummy_dma_ops,
+ };
+
+-static const struct snd_soc_component_driver dummy_codec = {
+-       .idle_bias_on           = 1,
+-       .use_pmdown_time        = 1,
+-       .endianness             = 1,
+-       .non_legacy_dai_naming  = 1,
+-};
++static const struct snd_soc_codec_driver dummy_codec;
+
+ #define STUB_RATES     SNDRV_PCM_RATE_8000_192000
+ #define STUB_FORMATS   (SNDRV_PCM_FMTBIT_S8 | \
+@@ -337,22 +332,33 @@
+ {
+        int ret;
+
+-       ret = devm_snd_soc_register_component(&pdev->dev,
+-                                             &dummy_codec, &dummy_dai, 1);
++       ret = snd_soc_register_codec(&pdev->dev, &dummy_codec, &dummy_dai, 1);
++
+        if (ret < 0)
+                return ret;
+
+-       ret = devm_snd_soc_register_component(&pdev->dev, &dummy_platform,
+-                                             NULL, 0);
++       ret = snd_soc_register_platform(&pdev->dev, &dummy_platform);
++
++       if (ret < 0) {
++               snd_soc_unregister_codec(&pdev->dev);
++               return ret;
++       }
+
+        return ret;
+ }
+
++static int snd_soc_dummy_remove(struct platform_device *pdev)
++{
++       snd_soc_unregister_platform(&pdev->dev);
++
++       return 0;
++}
++
+ static struct platform_driver soc_dummy_driver = {
+        .driver = {
+                .name = "snd-soc-dummy",
+        },
+-       .probe = snd_soc_dummy_probe,
++       .remove = snd_soc_dummy_remove,
+ };
+
+ static struct platform_device *soc_dummy_dev;

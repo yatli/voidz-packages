@@ -1,0 +1,48 @@
+--- a/drivers/input/keyboard/pxa27x_keypad.c	2019-03-04 12:21:29.000000000 +1300
++++ b/drivers/input/keyboard/pxa27x_keypad.c	2019-03-12 18:41:57.920801291 +1300
+@@ -669,14 +669,9 @@
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct pxa27x_keypad *keypad = platform_get_drvdata(pdev);
+ 
+-	/*
+-	 * If the keypad is used a wake up source, clock can not be disabled.
+-	 * Or it can not detect the key pressing.
+-	 */
++	clk_disable(keypad->clk);
+ 	if (device_may_wakeup(&pdev->dev))
+ 		enable_irq_wake(keypad->irq);
+-	else
+-		clk_disable_unprepare(keypad->clk);
+ 
+ 	return 0;
+ }
+@@ -692,21 +687,19 @@
+ 	 * If the keypad is used as wake up source, the clock is not turned
+ 	 * off. So do not need configure it again.
+ 	 */
+-	if (device_may_wakeup(&pdev->dev)) {
++	if (device_may_wakeup(&pdev->dev))
+ 		disable_irq_wake(keypad->irq);
+-	} else {
+-		mutex_lock(&input_dev->mutex);
+ 
+-		if (input_dev->users) {
+-			/* Enable unit clock */
+-			ret = clk_prepare_enable(keypad->clk);
+-			if (!ret)
+-				pxa27x_keypad_config(keypad);
+-		}
++	mutex_lock(&input_dev->mutex);
+ 
+-		mutex_unlock(&input_dev->mutex);
++	if (input_dev->users) {
++		/* Enable unit clock */
++		clk_enable(keypad->clk);
++		pxa27x_keypad_config(keypad);
+ 	}
+ 
++	mutex_unlock(&input_dev->mutex);
++
+ 	return ret;
+ }
+ #endif

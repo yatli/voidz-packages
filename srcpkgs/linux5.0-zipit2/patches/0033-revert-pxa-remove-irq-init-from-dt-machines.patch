@@ -1,0 +1,51 @@
+--- a/arch/arm/mach-pxa/generic.h 2019-03-04 12:21:29.000000000 +1300
++++ b/arch/arm/mach-pxa/generic.h 2019-03-13 17:18:18.281767825 +1300
+@@ -33,6 +33,7 @@
+
+ #define pxa27x_handle_irq ichp_handle_irq
+ extern int __init pxa27x_clocks_init(void);
++extern void __init pxa27x_dt_init_irq(void);
+ extern unsigned        pxa27x_get_clk_frequency_khz(int);
+ extern void __init pxa27x_init_irq(void);
+ extern void __init pxa27x_map_io(void);
+--- a/arch/arm/mach-pxa/pxa-dt.c  2019-03-04 12:21:29.000000000 +1300
++++ b/arch/arm/mach-pxa/pxa-dt.c  2019-03-13 17:21:17.482752993 +1300
+@@ -39,6 +39,8 @@
+
+ DT_MACHINE_START(PXA27X_DT, "Marvell PXA27x (Device Tree Support)")
+        .map_io         = pxa27x_map_io,
++       .init_irq       = pxa27x_dt_init_irq,
++       .handle_irq     = pxa27x_handle_irq,
+        .restart        = pxa_restart,
+        .dt_compat      = pxa27x_dt_board_compat,
+ MACHINE_END
+--- a/arch/arm/mach-pxa/pxa27x.c  2019-03-13 17:09:22.089812202 +1300
++++ b/arch/arm/mach-pxa/pxa27x.c  2019-03-13 17:26:45.510725844 +1300
+@@ -18,7 +18,6 @@
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/irqchip.h>
+ #include <linux/suspend.h>
+ #include <linux/platform_device.h>
+ #include <linux/syscore_ops.h>
+@@ -239,15 +238,11 @@
+        pxa_init_irq(34, pxa27x_set_wake);
+ }
+
+-static int __init
+-pxa27x_dt_init_irq(struct device_node *node, struct device_node *parent)
++void __init pxa27x_dt_init_irq(void)
+ {
+-       pxa_dt_irq_init(pxa27x_set_wake);
+-       set_handle_irq(ichp_handle_irq);
+-
+-       return 0;
++       if (IS_ENABLED(CONFIG_OF))
++               pxa_dt_irq_init(pxa27x_set_wake);
+ }
+-IRQCHIP_DECLARE(pxa27x_intc, "marvell,pxa-intc", pxa27x_dt_init_irq);
+
+ static struct map_desc pxa27x_io_desc[] __initdata = {
+        {       /* Mem Ctl */
+
