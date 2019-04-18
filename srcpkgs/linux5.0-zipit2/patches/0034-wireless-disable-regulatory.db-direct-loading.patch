@@ -1,0 +1,79 @@
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -489,6 +489,7 @@ static void reg_regdb_apply(struct work_
+ 
+ static DECLARE_WORK(reg_regdb_work, reg_regdb_apply);
+ 
++#if 0
+ static int reg_schedule_apply(const struct ieee80211_regdomain *regdom)
+ {
+ 	struct reg_regdb_apply_request *request;
+@@ -508,6 +509,7 @@ static int reg_schedule_apply(const stru
+ 	schedule_work(&reg_regdb_work);
+ 	return 0;
+ }
++#endif
+ 
+ #ifdef CONFIG_CFG80211_CRDA_SUPPORT
+ /* Max number of consecutive attempts to communicate with CRDA  */
+@@ -587,6 +589,36 @@ static inline int call_crda(const char *
+ /* code to directly load a firmware database through request_firmware */
+ static const struct fwdb_header *regdb;
+ 
++#if 1
++
++static int load_builtin_regdb_keys(void)
++{
++	return 0;
++}
++
++static void free_regdb_keyring(void)
++{
++}
++
++static int query_regdb_file(const char *alpha2)
++{
++	return -ENOENT;
++}
++
++int reg_reload_regdb(void)
++{
++	return -ENOENT;
++}
++
++int reg_query_regdb_wmm(char *alpha2, int freq, u32 *dbptr,
++			struct ieee80211_wmm_rule *rule)
++{
++	return -ENODATA;
++}
++EXPORT_SYMBOL(reg_query_regdb_wmm);
++
++#else /* disabled until we update wireless-regdb */
++
+ struct fwdb_country {
+ 	u8 alpha2[2];
+ 	__be16 coll_ptr;
+@@ -1152,6 +1184,8 @@ int reg_reload_regdb(void)
+ 	return err;
+ }
+ 
++#endif
++
+ static bool reg_query_database(struct regulatory_request *request)
+ {
+ 	if (query_regdb_file(request->alpha2) == 0)
+--- a/include/net/cfg80211.h      2019-03-04 12:21:29.000000000 +1300
++++ b/include/net/cfg80211.h      2019-03-15 17:59:26.155432394 +1300
+@@ -5180,9 +5180,9 @@
+  *
+  * Return: 0 on success. -ENODATA.
+  */
+-int reg_query_regdb_wmm(char *alpha2, int freq,
++/* int reg_query_regdb_wmm(char *alpha2, int freq,
+                        struct ieee80211_reg_rule *rule);
+-
++*/
+ /*
+  * callbacks for asynchronous cfg80211 methods, notification
+  * functions and BSS handling helpers
+

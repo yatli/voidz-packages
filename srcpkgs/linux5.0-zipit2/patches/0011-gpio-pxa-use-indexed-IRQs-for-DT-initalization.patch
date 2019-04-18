@@ -1,0 +1,24 @@
+--- a/drivers/gpio/gpio-pxa.c     2019-03-04 12:21:29.000000000 +1300
++++ b/drivers/gpio/gpio-pxa.c     2019-03-13 17:49:30.794612849 +1300
+@@ -23,6 +23,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/of_irq.h>
+ #include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+@@ -656,9 +657,10 @@
+        if (!pchip->irqdomain)
+                return -ENOMEM;
+
+-       irq0 = platform_get_irq_byname(pdev, "gpio0");
+-       irq1 = platform_get_irq_byname(pdev, "gpio1");
+-       irq_mux = platform_get_irq_byname(pdev, "gpio_mux");
++       irq0 = of_irq_get(pdev->dev.of_node, 0);
++       irq1 = of_irq_get(pdev->dev.of_node, 1);
++       irq_mux = of_irq_get(pdev->dev.of_node, 2);
++
+        if ((irq0 > 0 && irq1 <= 0) || (irq0 <= 0 && irq1 > 0)
+                || (irq_mux <= 0))
+                return -EINVAL;
