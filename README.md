@@ -17,7 +17,7 @@ Enable the testing repo:
 echo 'repository=https://www.oesf.org/repository/feeds/voidlinux/testing/build8' > /etc/xbps.d/00-repository-main.conf
 ```
 
-Forum: https://www.oesf.org/forum/index.php?showtopic=34937
+Forum: https://www.oesf.org/forum/index.php?board=205.0
 
 ### Oustanding tasks and known issues:
 
