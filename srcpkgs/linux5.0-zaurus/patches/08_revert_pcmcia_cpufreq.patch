@@ -1,4 +1,3 @@
-reverted:
 --- b/drivers/pcmcia/soc_common.c
 +++ a/drivers/pcmcia/soc_common.c
 @@ -732,15 +732,50 @@
