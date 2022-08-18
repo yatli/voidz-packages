@@ -1,6 +1,6 @@
 # Template file for 'linux-zaurus'
 pkgname=linux-zaurus
-version=4.19
+version=5.4
 revision=1
 build_style=meta
 homepage="http://www.oesf.org/"
