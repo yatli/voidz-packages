@@ -17,7 +17,7 @@ noshlibprovides=yes
 preserve=yes
 
 only_for_archs="armv5tel-musl"
-hostmakedepends="bc elfutils-devel kmod libressl-devel perl gmp-devel libmpc-devel lz4 ccache flex bison musl-fts"
+hostmakedepends="bc elfutils-devel kmod openssl-devel perl gmp-devel libmpc-devel lz4 ccache flex bison musl-fts"
 
 _kernver="${version}.0_${revision}"
 triggers="kernel-hooks"
