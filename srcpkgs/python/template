@@ -16,7 +16,7 @@ maintainer="Leah Neukirchen <leah@vuxu.org>"
 license="Python-2.0"
 homepage="https://www.python.org"
 distfiles="https://github.com/ActiveState/cpython/archive/v${version}.tar.gz"
-checksum=e5e80ae00e20994150f2acfe4acfc541cbe6e4e77d334e1e7f9f33f303ab89ba
+checksum=3a829df9331f9b8d827553df92256533da51622aab013452b0b56731d17c53d6
 
 alternatives="
  python:idle:/usr/bin/idle2.7
