@@ -18,16 +18,16 @@ do_install() {
 	vinstall ${FILESDIR}/borzoi.map 644 usr/share/kbd/keymaps/zaurus
 
 	# Install fb.modes
-	vinstall ${FILESDIR}/fb.modes 644 etc
+	vinstall ${FILESDIR}/fb.modes 644 etc fb.modes.zaurus
 
 	# Install hostname
-	vinstall ${FILESDIR}/hostname 644 etc
+	vinstall ${FILESDIR}/hostname 644 etc hostname.zaurus
 
 	# Install default fstab
-	vinstall ${FILESDIR}/fstab 644 etc
+	vinstall ${FILESDIR}/fstab 644 etc fstab.zaurus
 
 	# Install default rc.conf
-	vinstall ${FILESDIR}/rc.conf 644 etc
+	vinstall ${FILESDIR}/rc.conf 644 etc rc.conf.zaurus
 
 	# Install terminus font for tty console
 	vinstall ${FILESDIR}/ter-v12n.psf.gz 644 usr/share/kbd/consolefonts

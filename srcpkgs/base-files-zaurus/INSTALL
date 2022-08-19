@@ -1,0 +1,21 @@
+update_zaurus_files() {
+  # Install fb.modes
+  # mv etc/fb.modes.zaurus etc/fb.modes
+
+  # Install hostname
+# vinstall ${FILESDIR}/hostname 644 etc hostname.zaurus
+
+  # Install default fstab
+#  vinstall ${FILESDIR}/fstab 644 etc fstab.zaurus
+
+  # Install default rc.conf
+#  vinstall ${FILESDIR}/rc.conf 644 etc rc.conf.zaurus
+
+}
+
+case "${ACTION}" in
+post)
+	echo "Updating Zaurus-specific config files..."
+	update_zaurus_files
+	;;
+esac
