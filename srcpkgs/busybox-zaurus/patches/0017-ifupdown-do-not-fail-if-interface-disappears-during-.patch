@@ -14,8 +14,8 @@ Signed-off-by: Kaarle Ritvanen <kaarle.ritvanen@datakunkku.fi>
 
 diff --git a/networking/ifupdown.c b/networking/ifupdown.c
 index 534c9f0c7..35d13c5e1 100644
---- networking/ifupdown.c
-+++ networking/ifupdown.c
+--- a/networking/ifupdown.c
++++ b/networking/ifupdown.c
 @@ -141,6 +141,7 @@
  #include "libbb.h"
  #include "common_bufsiz.h"

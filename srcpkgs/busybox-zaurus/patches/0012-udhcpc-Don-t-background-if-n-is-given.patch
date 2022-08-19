@@ -12,8 +12,8 @@ it possible to set -n option at runtime.
 
 diff --git a/networking/udhcp/dhcpc.c b/networking/udhcp/dhcpc.c
 index cc1d22c8e..10b846b0a 100644
---- networking/udhcp/dhcpc.c
-+++ networking/udhcp/dhcpc.c
+--- a/networking/udhcp/dhcpc.c
++++ b/networking/udhcp/dhcpc.c
 @@ -1479,19 +1479,19 @@ int udhcpc_main(int argc UNUSED_PARAM, char **argv)
  				}
   leasefail:

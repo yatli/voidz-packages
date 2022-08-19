@@ -10,8 +10,8 @@ Some slower nics needs more attempts to get a lease
 
 diff --git a/networking/udhcp/dhcpc.c b/networking/udhcp/dhcpc.c
 index 55f21c187..cc1d22c8e 100644
---- networking/udhcp/dhcpc.c
-+++ networking/udhcp/dhcpc.c
+--- a/networking/udhcp/dhcpc.c
++++ b/networking/udhcp/dhcpc.c
 @@ -1203,7 +1203,7 @@ static void client_background(void)
  //usage:     "\n	-p FILE		Create pidfile"
  //usage:     "\n	-B		Request broadcast replies"

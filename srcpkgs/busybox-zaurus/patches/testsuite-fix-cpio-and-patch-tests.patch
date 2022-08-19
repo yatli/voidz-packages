@@ -14,8 +14,8 @@ and the tests pass when this is corrected.
  testsuite/patch.tests | 4 ++--
  2 files changed, 5 insertions(+), 5 deletions(-)
 
---- testsuite/cpio.tests
-+++ testsuite/cpio.tests
+--- a/testsuite/cpio.tests
++++ b/testsuite/cpio.tests
 @@ -129,7 +129,7 @@ SKIP=
  
  optional FEATURE_CPIO_O
@@ -43,8 +43,8 @@ and the tests pass when this is corrected.
  "\
  8765/4321
  0
---- testsuite/patch.tests
-+++ testsuite/patch.tests
+--- a/testsuite/patch.tests
++++ b/testsuite/patch.tests
 @@ -75,12 +75,12 @@ zxc
  testing "patch detects already applied hunk" \
  	'patch 2>&1; echo $?; cat input' \
