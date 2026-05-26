@@ -85,10 +85,11 @@ libcurl-devel_package() {
 	depends="${makedepends} libcurl>=${version}_${revision}"
 	short_desc="Multiprotocol file transfer library - development files"
 	pkg_install() {
+		rm -rf "${PKGDESTDIR}"
 		vmove usr/bin/curl-config
 		vmove "usr/share/man/man1/curl-config*"
-		vmove usr/share/man/man3
-		vmove usr/share/aclocal
+		vmove "usr/share/man/man3/*"
+		vmove "usr/share/aclocal/*"
 		vmove usr/include
 		vmove "usr/lib/*.a"
 		vmove "usr/lib/*.so"

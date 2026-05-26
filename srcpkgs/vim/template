@@ -143,9 +143,17 @@ do_install() {
 	fi
 }
 
+xxd_package() {
+        short_desc="hex dump tool from vim"
+        pkg_install() {
+                vmove usr/bin/xxd
+                vmove usr/share/man/man1/xxd.1
+        }
+}
+
 vim-common_package() {
-	short_desc+=" - common files"
-	depends="xxd"
+        short_desc+=" - common files"
+        depends="xxd"
 	alternatives="
 	 vi:ex:/usr/bin/vim
 	 vi:ex.1:/usr/share/man/man1/vim.1

@@ -6,7 +6,7 @@ build_style=gnu-makefile
 make_build_args="HOSTSTRIP=: STRIP=: NO_SDL=1"
 make_build_target="tools-all tools-only envtools"
 hostmakedepends="bison flex which python3 swig python3-devel python3-setuptools python3-pyelftools"
-makedepends="openssl-devel libuuid-devel gnutls-devel ncurses-libtinfo-devel"
+makedepends="openssl-devel libuuid-devel ncurses-libtinfo-devel"
 short_desc="Das U-Boot tools"
 maintainer="Duncaen <duncaen@voidlinux.org>"
 license="GPL-2.0-or-later"
@@ -29,6 +29,8 @@ post_extract() {
 
 do_configure() {
 	make ${makejobs} ${make_build_args} tools-only_defconfig
+	echo "CONFIG_TOOLS_MKEFICAPSULE=n" >> .config
+	make ${makejobs} ${make_build_args} olddefconfig
 }
 
 do_build() {
@@ -46,7 +48,7 @@ do_check() {
 do_install() {
 	ln -sf fw_printenv tools/env/fw_setenv
 	for x in dumpimage fdtgrep fit_check_sign fit_info gen_eth_addr \
-		gen_ethaddr_crc ifwitool img2srec kwboot mkeficapsule mkenvimage mkimage \
+             gen_ethaddr_crc ifwitool img2srec kwboot mkenvimage mkimage \
 		proftool spl_size_limit env/fw_printenv env/fw_setenv; do
 		vbin "tools/$x"
 		if [ -r "doc/${x}.1" ]; then
