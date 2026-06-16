@@ -10,14 +10,16 @@ maintainer="Greguu <greguu@null.net>"
 license="Custom:Xiph"
 homepage="https://wiki.xiph.org/Tremor"
 distfiles="https://gitlab.xiph.org/xiph/tremor/-/archive/master/tremor-master.tar.gz"
-checksum=1cfd608de5f28cf331730d4b875b21a8ce37cd0f8a89b6439e0f462045163be4
+checksum=6eceff4526bd717c6956b3d49459e13b4cfcfe35781cf09a271790e4ace7315f
 
 #post_extract() {
 #	mv ${XBPS_BUILDDIR}/tremor-master ${XBPS_BUILDDIR}/tremor-git-${version}
 #}
 
 pre_configure(){
-	autoreconf --install
+        # Remove broken XIPH_PATH_OGG fallback - pkg-config finds ogg fine
+        sed -i '/XIPH_PATH_OGG/,/LIBS=\$libs_save/c\  AC_MSG_ERROR([Ogg not found via pkg-config])' configure.ac
+        autoreconf --install
 }
 
 tremor-git-devel_package() {

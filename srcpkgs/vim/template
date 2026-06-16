@@ -163,7 +163,9 @@ vim-common_package() {
 	 vi:view.1:/usr/share/man/man1/vim.1
 	"
 	pkg_install() {
-		vmove usr/share/icons
+		if [ -d "${DESTDIR}/usr/share/icons" ]; then
+			vmove usr/share/icons
+		fi
 		vmove usr/bin/rvim
 		vmove usr/bin/vim-ex
 		vmove usr/bin/vimdiff
